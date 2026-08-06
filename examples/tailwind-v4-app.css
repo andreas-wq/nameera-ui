@@ -1,0 +1,75 @@
+/*
+ * Contoh konfigurasi Tailwind CSS v4 untuk project Laravel yang menggunakan package Nameera UI.
+ * Salin konten ini ke `resources/css/app.css` di project utama Anda, lalu sesuaikan path jika perlu.
+ */
+
+/* 1. Import Tailwind CSS v4 (standar Laravel 11+ dengan Vite) */
+@import "tailwindcss";
+
+/* 2. Import file CSS package Nameera UI yang menyediakan variabel warna */
+@import "../../vendor/nameera/ui-template/public/css/style.css";
+
+/* 3. Scan semua view package Nameera UI agar utility class-nya aktif */
+@source "../../vendor/nameera/ui-template/resources/views/**/*.blade.php";
+
+/* 4. Definisikan tema berdasarkan variabel CSS dari Nameera UI */
+@theme {
+  /* Warna utama (primary) */
+  --color-primary: var(--primary, #3b6d11);
+  --color-primary-mid: var(--primary-mid, #639922);
+  --color-primary-light: var(--primary-light, #c0dd97);
+  --color-primary-bg: var(--primary-bg, #eaf3de);
+
+  /* Warna aksen (accent) */
+  --color-accent: var(--accent, #ba7517);
+  --color-accent-bg: var(--accent-bg, #faeeda);
+
+  /* Warna gelap (dark) */
+  --color-dark: var(--dark, #1a2e1a);
+  --color-dark-mid: var(--dark-mid, #27500a);
+
+  /* Font */
+  --font-heading: var(--font-heading, "Plus Jakarta Sans", sans-serif);
+  --font-body: var(--font-body, "Nunito", sans-serif);
+
+  /* Radius */
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+}
+
+/* 5. Custom CSS tambahan jika diperlukan */
+/* Misalnya, override scrollbar untuk konsistensi dengan tema Nameera UI */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-mid);
+}
+
+/* 6. Pastikan body menggunakan font-body dari tema */
+body {
+  font-family: var(--font-body);
+}
+
+/* 7. Heading menggunakan font-heading */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
+  font-family: var(--font-heading);
+}

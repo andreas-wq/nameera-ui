@@ -81,6 +81,37 @@ export default {
 };
 ```
 
+#### Untuk Tailwind CSS v4 (Laravel 11+ dengan `@tailwind` directive)
+
+Jika project Anda menggunakan Tailwind CSS v4 (yang menggunakan file `app.css` dengan arahan `@import "tailwindcss";`), Anda perlu menambahkan pemindaian source dan mendefinisikan variabel tema.
+
+1. **Import file CSS package** di `resources/css/app.css`:
+
+   ```css
+   @import "tailwindcss";
+   @import "../../vendor/nameera/ui-template/public/css/style.css";
+   ```
+
+2. **Tambahkan directive `@source`** untuk memindai view package:
+
+   ```css
+   @source "../../vendor/nameera/ui-template/resources/views/**/*.blade.php";
+   ```
+
+3. **Definisikan pemetaan warna di `@theme`** (opsional, jika ingin menggunakan variabel CSS sebagai warna tema):
+   ```css
+   @theme {
+     --color-primary: var(--primary, #3b6d11);
+     --color-primary-mid: var(--primary-mid, #639922);
+     --color-primary-light: var(--primary-light, #c0dd97);
+     --color-dark: var(--dark, #1a2e1a);
+     --font-heading: var(--font-heading, "Plus Jakarta Sans", sans-serif);
+     --font-body: var(--font-body, "Nunito", sans-serif);
+   }
+   ```
+
+Dengan konfigurasi di atas, utility class seperti `bg-primary`, `hover:bg-primary-mid`, `text-dark`, dan `font-heading` akan langsung bekerja.
+
 ### Langkah 5: Tambahkan Vite Directive di Layout Utama
 
 Pastikan layout utama Laravel project Anda (biasanya `resources/views/layouts/app.blade.php` atau layout serupa) memuat Vite dengan directive berikut:
