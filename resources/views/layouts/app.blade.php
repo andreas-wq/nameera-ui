@@ -12,7 +12,7 @@
       rel="stylesheet"
     />
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="{{ asset('vendor/nameera/css/style.css') }}" />
     @stack('styles')
   </head>
