@@ -40,7 +40,7 @@
 
     <!-- Menu Home (Aktif) -->
     <a
-      href="{{ route('dashboard') }}"
+      href="#"
       class="bg-primary/90 text-white shadow-md shadow-primary/20 backdrop-blur-md flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 whitespace-nowrap group"
     >
       <div class="text-white transition-colors">

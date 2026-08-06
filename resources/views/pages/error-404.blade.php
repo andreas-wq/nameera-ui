@@ -87,7 +87,7 @@
       class="flex flex-col sm:flex-row items-center justify-center gap-4"
     >
       <a
-        href="{{ route('nameera.dashboard') }}"
+        href="#"
         class="w-full sm:w-auto bg-primary hover:bg-primary-mid text-white px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2"
       >
         <svg

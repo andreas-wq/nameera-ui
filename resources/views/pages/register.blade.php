@@ -168,7 +168,7 @@
         </p>
       </div>
 
-      <form action="{{ route('nameera.dashboard') }}" class="space-y-4">
+      <form action="#" class="space-y-4">
         <div class="grid grid-cols-2 gap-4">
           <div class="col-span-2 sm:col-span-1">
             <label
@@ -298,7 +298,7 @@
       >
         Sudah punya akun?
         <a
-          href="{{ route('nameera.login') }}"
+          href="#"
           class="font-bold text-primary hover:text-primary-mid transition-colors"
           >Sign In di sini</a
         >

@@ -157,7 +157,7 @@
         </p>
       </div>
 
-      <form action="{{ route('login') }}" method="POST" class="space-y-5">
+      <form action="#" method="POST" class="space-y-5">
         @csrf
         <div>
           <label
@@ -243,7 +243,7 @@
             >
           </label>
           <a
-            href="{{ route('password.request') }}"
+            href="#"
             class="text-sm font-bold text-primary hover:text-primary-mid transition-colors"
             >Lupa Password?</a
           >
@@ -313,7 +313,7 @@
       >
         Belum punya akun?
         <a
-          href="{{ route('register') }}"
+          href="#"
           class="font-bold text-primary hover:text-primary-mid transition-colors"
           >Sign Up di sini</a
         >
