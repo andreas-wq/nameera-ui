@@ -1,0 +1,1413 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Web Admin Panel - Nameera ui</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Plugin form: date picker, select pencarian, editor teks, upload drag&drop, tag input -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/choices.js@11.0.4/public/assets/styles/choices.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/filepond@4.31.1/dist/filepond.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/filepond-plugin-image-preview@4.6.12/dist/filepond-plugin-image-preview.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@yaireo/tagify@4.31.4/dist/tagify.css"
+    />
+
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+
+  <body
+    x-data="adminApp()"
+    x-init="initApp()"
+    class="bg-slate-100 text-gray-800 antialiased overflow-hidden selection:bg-primary-light selection:text-dark transition-colors duration-300 dark:bg-[#0f172a]"
+  >
+    <div class="flex h-screen w-full relative p-0 lg:p-4 gap-4">
+      <div
+        x-show="isMobile && sidebarOpen"
+        x-transition.opacity
+        @click="sidebarOpen = false"
+        class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden"
+      ></div>
+
+      <aside
+        :class="{'translate-x-0 w-[280px]': sidebarOpen, '-translate-x-full w-[280px]': !sidebarOpen && isMobile, 'translate-x-0 w-[88px]': !sidebarOpen && !isMobile}"
+        class="fixed lg:relative z-50 h-full transition-all duration-400 ease-out bg-[#142414] dark:bg-gray-900 text-white flex flex-col shadow-2xl lg:rounded-3xl shrink-0 overflow-hidden border border-white/5 dark:border-gray-800"
+      >
+        <div
+          class="h-20 flex items-center px-6 border-b border-white/5 shrink-0"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-light to-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/30"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+              ></path>
+            </svg>
+          </div>
+          <span
+            x-show="sidebarOpen"
+            x-transition.duration.300ms
+            class="ml-4 font-heading font-extrabold text-xl text-white tracking-wide whitespace-nowrap"
+            >Nameera <span class="text-primary-light">ui</span></span
+          >
+        </div>
+
+        <nav class="flex-1 overflow-y-auto p-4 space-y-1.5 scrollbar-hide">
+          <p
+            x-show="sidebarOpen"
+            class="px-4 text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-3 mt-2"
+          >
+            Main Menu
+          </p>
+
+          <a
+            href="#"
+            @click.prevent="navigate('beranda')"
+            :class="activeMenu === 'beranda' ? 'bg-primary/90 text-white shadow-md shadow-primary/20 backdrop-blur-md' : 'text-gray-400 hover:bg-white/5 hover:text-white'"
+            class="flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 whitespace-nowrap group"
+          >
+            <div
+              :class="activeMenu === 'beranda' ? 'text-white' : 'text-gray-400 group-hover:text-primary-light'"
+              class="transition-colors"
+            >
+              <svg
+                class="w-5 h-5 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                ></path>
+              </svg>
+            </div>
+            <span x-show="sidebarOpen" class="font-bold text-sm tracking-wide"
+              >Home</span
+            >
+          </a>
+          <!-- form -->
+          <div x-data="{ open: false }" class="whitespace-nowrap">
+            <button
+              @click="open = !open"
+              :class="activeMenu.startsWith('form_') ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-300 group"
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  :class="activeMenu.startsWith('form_') ? 'text-white' : 'text-gray-400 group-hover:text-primary-light'"
+                  class="transition-colors"
+                >
+                  <svg
+                    class="w-5 h-5 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    ></path>
+                  </svg>
+                </div>
+                <span
+                  x-show="sidebarOpen"
+                  class="font-bold text-sm tracking-wide"
+                  >Form</span
+                >
+              </div>
+              <svg
+                x-show="sidebarOpen"
+                :class="open ? 'rotate-180' : ''"
+                class="w-4 h-4 transition-transform duration-300 text-gray-500 group-hover:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </button>
+            <div
+              x-show="open && sidebarOpen"
+              x-collapse
+              class="pl-[3.25rem] pr-4 py-1 space-y-1"
+            >
+              <a
+                href="#"
+                @click.prevent="navigate('form_basic')"
+                :class="activeMenu === 'form_basic' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="block text-sm py-2 transition-colors"
+                >basic</a
+              >
+              <a
+                href="#"
+                @click.prevent="navigate('form_special')"
+                :class="activeMenu === 'form_special' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="block text-sm py-2 transition-colors"
+                >special</a
+              >
+              <a
+                href="#"
+                @click.prevent="navigate('form_custom')"
+                :class="activeMenu === 'form_custom' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="flex justify-between items-center text-sm py-2 transition-colors"
+              >
+                <span>Custom</span>
+                <span
+                  class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm"
+                  >2</span
+                >
+              </a>
+            </div>
+          </div>
+          <!-- table -->
+          <div x-data="{ open: false }" class="whitespace-nowrap">
+            <button
+              @click="open = !open"
+              :class="activeMenu.startsWith('data_table_') ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-300 group"
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  :class="activeMenu.startsWith('data_table_') ? 'text-white' : 'text-gray-400 group-hover:text-primary-light'"
+                  class="transition-colors"
+                >
+                  <svg
+                    class="w-5 h-5 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 10h18M3 6h18M3 14h18M3 18h18"
+                    ></path>
+                  </svg>
+                </div>
+                <span
+                  x-show="sidebarOpen"
+                  class="font-bold text-sm tracking-wide"
+                  >Data Table</span
+                >
+              </div>
+              <svg
+                x-show="sidebarOpen"
+                :class="open ? 'rotate-180' : ''"
+                class="w-4 h-4 transition-transform duration-300 text-gray-500 group-hover:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </button>
+            <div
+              x-show="open && sidebarOpen"
+              x-collapse
+              class="pl-[3.25rem] pr-4 py-1 space-y-1"
+            >
+              <a
+                href="#"
+                @click.prevent="navigate('data_table_basic')"
+                :class="activeMenu === 'data_table_basic' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="block text-sm py-2 transition-colors"
+                >basic</a
+              >
+              <a
+                href="#"
+                @click.prevent="navigate('data_table_special')"
+                :class="activeMenu === 'data_table_special' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="block text-sm py-2 transition-colors"
+                >special</a
+              >
+              <a
+                href="#"
+                @click.prevent="navigate('data_table_custom')"
+                :class="activeMenu === 'data_table_custom' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="flex justify-between items-center text-sm py-2 transition-colors"
+              >
+                <span>Custom</span>
+                <span
+                  class="bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm"
+                  >2</span
+                >
+              </a>
+            </div>
+          </div>
+          <!-- componen -->
+          <div x-data="{ open: false }" class="whitespace-nowrap">
+            <button
+              @click="open = !open"
+              :class="activeMenu.startsWith('componen_') ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-300 group"
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  :class="activeMenu.startsWith('componen_') ? 'text-white' : 'text-gray-400 group-hover:text-primary-light'"
+                  class="transition-colors"
+                >
+                  <svg
+                    class="w-5 h-5 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                    ></path>
+                  </svg>
+                </div>
+                <span
+                  x-show="sidebarOpen"
+                  class="font-bold text-sm tracking-wide"
+                  >Components</span
+                >
+              </div>
+              <svg
+                x-show="sidebarOpen"
+                :class="open ? 'rotate-180' : ''"
+                class="w-4 h-4 transition-transform duration-300 text-gray-500 group-hover:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </button>
+            <div
+              x-show="open && sidebarOpen"
+              x-collapse
+              class="pl-[3.25rem] pr-4 py-1 space-y-1"
+            >
+              <a
+                href="#"
+                @click.prevent="navigate('componen_navbar')"
+                :class="activeMenu === 'componen_navbar' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="block text-sm py-2 transition-colors"
+                >navbar</a
+              >
+              <a
+                href="#"
+                @click.prevent="navigate('componen_button')"
+                :class="activeMenu === 'componen_button' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="block text-sm py-2 transition-colors"
+                >button</a
+              >
+              <a
+                href="#"
+                @click.prevent="navigate('componen_card')"
+                :class="activeMenu === 'componen_card' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="block text-sm py-2 transition-colors"
+                >card</a
+              >
+              <a
+                href="#"
+                @click.prevent="navigate('componen_alert')"
+                :class="activeMenu === 'componen_alert' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="block text-sm py-2 transition-colors"
+                >alert</a
+              >
+            </div>
+          </div>
+          <!-- pages -->
+          <div x-data="{ open: false }" class="whitespace-nowrap">
+            <button
+              @click="open = !open"
+              :class="activeMenu.startsWith('pages_') ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-white'"
+              class="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-300 group"
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  :class="activeMenu.startsWith('pages_') ? 'text-white' : 'text-gray-400 group-hover:text-primary-light'"
+                  class="transition-colors"
+                >
+                  <svg
+                    class="w-5 h-5 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                    ></path>
+                  </svg>
+                </div>
+                <span
+                  x-show="sidebarOpen"
+                  class="font-bold text-sm tracking-wide"
+                  >Pages</span
+                >
+              </div>
+              <svg
+                x-show="sidebarOpen"
+                :class="open ? 'rotate-180' : ''"
+                class="w-4 h-4 transition-transform duration-300 text-gray-500 group-hover:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </button>
+            <div
+              x-show="open && sidebarOpen"
+              x-collapse
+              class="pl-[3.25rem] pr-4 py-1 space-y-1"
+            >
+              <a
+                href="#"
+                @click.prevent="navigate('pages_login')"
+                :class="activeMenu === 'pages_login' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="block text-sm py-2 transition-colors"
+                >login</a
+              >
+              <a
+                href="#"
+                @click.prevent="navigate('pages_register')"
+                :class="activeMenu === 'pages_register' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="block text-sm py-2 transition-colors"
+                >register</a
+              >
+              <a
+                href="#"
+                @click.prevent="navigate('pages_error404')"
+                :class="activeMenu === 'pages_error404' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="flex justify-between items-center text-sm py-2 transition-colors"
+              >
+                <span>error404</span>
+              </a>
+              <a
+                href="#"
+                @click.prevent="navigate('pages_error500')"
+                :class="activeMenu === 'pages_error500' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="flex justify-between items-center text-sm py-2 transition-colors"
+              >
+                <span>error500</span>
+              </a>
+              <a
+                href="#"
+                @click.prevent="navigate('pages_profil')"
+                :class="activeMenu === 'pages_profil' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="flex justify-between items-center text-sm py-2 transition-colors"
+              >
+                <span>profil</span>
+              </a>
+              <a
+                href="#"
+                @click.prevent="navigate('pages_galery')"
+                :class="activeMenu === 'pages_galery' ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white'"
+                class="flex justify-between items-center text-sm py-2 transition-colors"
+              >
+                <span>galery</span>
+              </a>
+            </div>
+          </div>
+          <a
+            href="#"
+            @click.prevent="navigate('galeri')"
+            :class="activeMenu === 'galeri' ? 'bg-primary/90 text-white shadow-md shadow-primary/20 backdrop-blur-md' : 'text-gray-400 hover:bg-white/5 hover:text-white'"
+            class="flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 whitespace-nowrap group mt-2"
+          >
+            <div
+              :class="activeMenu === 'galeri' ? 'text-white' : 'text-gray-400 group-hover:text-primary-light'"
+              class="transition-colors"
+            >
+              <svg
+                class="w-5 h-5 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                ></path>
+              </svg>
+            </div>
+            <span x-show="sidebarOpen" class="font-bold text-sm tracking-wide"
+              >Galeri</span
+            >
+          </a>
+        </nav>
+
+        <div class="p-4 shrink-0">
+          <div
+            class="p-2 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3 hover:bg-white/10 transition-colors cursor-pointer"
+          >
+            <div
+              class="w-10 h-10 rounded-xl bg-primary-mid overflow-hidden shrink-0"
+            >
+              <img
+                src="https://ui-avatars.com/api/?name=Admin+Upland&background=639922&color=fff&rounded=true"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <div x-show="sidebarOpen" class="flex-1 overflow-hidden pr-2">
+              <h4 class="text-sm font-bold text-white truncate">
+                Administrator
+              </h4>
+              <p class="text-xs text-gray-400 font-medium truncate">
+                admin@upland.id
+              </p>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <div
+        class="flex-1 flex flex-col h-full bg-white dark:bg-gray-800 lg:rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700 overflow-hidden relative transition-colors duration-300"
+      >
+        <header
+          class="h-20 bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border-b border-gray-100 dark:border-gray-700/50 z-30 flex items-center justify-between px-6 lg:px-8 shrink-0 transition-colors duration-300 sticky top-0"
+        >
+          <div class="flex items-center gap-4">
+            <button
+              @click="sidebarOpen = !sidebarOpen"
+              class="w-10 h-10 flex items-center justify-center rounded-xl text-gray-500 hover:text-dark hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 transition-colors"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h7"
+                ></path>
+              </svg>
+            </button>
+            <div class="hidden md:flex relative group">
+              <div
+                class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+              >
+                <svg
+                  class="w-4 h-4 text-gray-400 group-focus-within:text-primary transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  ></path>
+                </svg>
+              </div>
+              <input
+                type="text"
+                placeholder="Cari data atau menu..."
+                class="block w-64 pl-11 pr-4 py-2.5 bg-gray-50 dark:bg-gray-900 border-none rounded-full text-sm focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-gray-800 transition-all font-medium text-gray-700 dark:text-gray-200"
+              />
+            </div>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button
+              class="w-10 h-10 flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors relative"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                ></path>
+              </svg>
+              <span
+                class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-gray-800"
+              ></span>
+            </button>
+
+            <button
+              type="button"
+              @click="isDarkMode = !isDarkMode"
+              aria-label="Ganti mode gelap/terang"
+              class="relative w-10 h-10 flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 transition-colors overflow-hidden"
+            >
+              <svg
+                x-show="!isDarkMode"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 -rotate-90 scale-50"
+                x-transition:enter-end="opacity-100 rotate-0 scale-100"
+                class="absolute w-5 h-5 fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"
+                />
+              </svg>
+              <svg
+                x-show="isDarkMode"
+                x-cloak
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 rotate-90 scale-50"
+                x-transition:enter-end="opacity-100 rotate-0 scale-100"
+                class="absolute w-5 h-5 fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"
+                />
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <main
+          class="flex-1 overflow-y-auto p-6 lg:p-10 transition-colors duration-300"
+          id="main-scroll"
+        >
+          <!-- ============ FORM: BASIC ============ -->
+          <div
+            x-show="activeMenu === 'form_basic'"
+            x-transition.opacity.duration.300ms
+          >
+            <div class="mb-8">
+              <div
+                class="flex items-center gap-1.5 text-xs font-bold text-primary-mid dark:text-primary-light uppercase tracking-wider mb-2"
+              >
+                <span>Form</span>
+                <span class="text-gray-300 dark:text-gray-600">/</span>
+                <span
+                  class="text-gray-400 dark:text-gray-500 normal-case font-semibold"
+                  >Basic</span
+                >
+              </div>
+              <h1
+                class="text-2xl lg:text-3xl font-heading font-extrabold text-dark dark:text-white"
+              >
+                Form Basic
+              </h1>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Elemen form bawaan browser (native), tanpa plugin tambahan.
+              </p>
+            </div>
+
+            <form
+              @submit.prevent=""
+              class="bg-white dark:bg-gray-800/60 border border-gray-100 dark:border-gray-700/50 rounded-3xl p-6 lg:p-8 shadow-sm"
+            >
+              <h3 class="font-heading font-bold text-dark dark:text-white mb-6">
+                Formulir Pendaftaran Petani
+              </h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                    >Nama Lengkap</label
+                  >
+                  <input
+                    type="text"
+                    required
+                    placeholder="cth. Siti Rahayu"
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-dark dark:text-gray-100 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                    >Email</label
+                  >
+                  <input
+                    type="email"
+                    required
+                    placeholder="nama@email.com"
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-dark dark:text-gray-100 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                    >No. Telepon</label
+                  >
+                  <input
+                    type="tel"
+                    placeholder="08xx-xxxx-xxxx"
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-dark dark:text-gray-100 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  />
+                </div>
+
+                <div x-data="{ show: false }">
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                    >Kata Sandi</label
+                  >
+                  <div class="relative">
+                    <input
+                      :type="show ? 'text' : 'password'"
+                      required
+                      placeholder="Minimal 8 karakter"
+                      class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-dark dark:text-gray-100 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all pr-11"
+                    />
+                    <button
+                      type="button"
+                      @click="show = !show"
+                      class="absolute inset-y-0 right-0 px-3.5 text-gray-400 hover:text-primary transition-colors"
+                    >
+                      <svg
+                        x-show="!show"
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        ></path>
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        ></path>
+                      </svg>
+                      <svg
+                        x-show="show"
+                        x-cloak
+                        class="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.025 10.025 0 012.132-3.542m3.44-2.264A9.959 9.959 0 0112 5c4.478 0 8.268 2.943 9.542 7a9.977 9.977 0 01-4.132 5.411M3 3l18 18"
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                    >Jenis Kelamin</label
+                  >
+                  <div class="flex items-center gap-6 h-12">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="gender"
+                        class="w-4 h-4 accent-primary cursor-pointer"
+                        checked
+                      />
+                      <span
+                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                        >Laki-laki</span
+                      >
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="gender"
+                        class="w-4 h-4 accent-primary cursor-pointer"
+                      />
+                      <span
+                        class="text-sm font-medium text-gray-600 dark:text-gray-300"
+                        >Perempuan</span
+                      >
+                    </label>
+                  </div>
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                    >Jenis Komoditas</label
+                  >
+                  <div class="relative">
+                    <select
+                      class="w-full appearance-none rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 pr-10 text-sm font-medium text-dark dark:text-gray-100 focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all cursor-pointer"
+                    >
+                      <option>Manggis</option>
+                      <option>Nanas</option>
+                      <option>Olahan</option>
+                      <option>Lainnya</option>
+                    </select>
+                    <svg
+                      class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      ></path>
+                    </svg>
+                  </div>
+                </div>
+
+                <div x-data="{ luas: 2 }">
+                  <label
+                    class="flex items-center justify-between text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    <span>Luas Lahan</span>
+                    <span
+                      class="text-primary dark:text-primary-light font-extrabold"
+                      x-text="luas + ' Ha'"
+                    ></span>
+                  </label>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10"
+                    step="0.5"
+                    x-model="luas"
+                    class="w-full h-2 rounded-full accent-primary cursor-pointer"
+                  />
+                </div>
+
+                <div class="flex items-center justify-between">
+                  <div>
+                    <label
+                      class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1"
+                      >Status Aktif</label
+                    >
+                    <p class="text-xs text-gray-400">
+                      Nonaktifkan jika anggota berhenti musim ini
+                    </p>
+                  </div>
+                  <label
+                    class="relative inline-flex items-center cursor-pointer"
+                  >
+                    <input type="checkbox" checked class="sr-only peer" />
+                    <div
+                      class="w-11 h-6 bg-gray-200 dark:bg-gray-700 rounded-full peer-checked:bg-primary transition-colors duration-300"
+                    ></div>
+                    <div
+                      class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-transform duration-300 peer-checked:translate-x-5"
+                    ></div>
+                  </label>
+                </div>
+
+                <div class="md:col-span-2">
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                    >Alamat Kebun</label
+                  >
+                  <textarea
+                    rows="3"
+                    placeholder="Dusun, desa, kecamatan, kabupaten..."
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-dark dark:text-gray-100 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all resize-none"
+                  ></textarea>
+                </div>
+
+                <div class="md:col-span-2">
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                    >Upload Foto KTP</label
+                  >
+                  <input
+                    type="file"
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-l-[11px] file:rounded-r-none file:border-0 file:bg-primary file:text-white file:font-bold file:text-sm hover:file:bg-primary-mid file:cursor-pointer file:transition-colors cursor-pointer"
+                  />
+                </div>
+
+                <div class="md:col-span-2">
+                  <label class="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      required
+                      class="w-4 h-4 rounded accent-primary cursor-pointer mt-0.5"
+                    />
+                    <span class="text-sm text-gray-600 dark:text-gray-300"
+                      >Saya menyetujui syarat & ketentuan keanggotaan
+                      koperasi.</span
+                    >
+                  </label>
+                </div>
+              </div>
+
+              <div
+                class="flex items-center gap-3 mt-8 pt-6 border-t border-gray-100 dark:border-gray-700/50"
+              >
+                <button
+                  type="submit"
+                  class="inline-flex items-center justify-center rounded-xl bg-primary hover:bg-primary-mid text-white font-bold text-sm px-6 py-2.5 transition-colors"
+                >
+                  Simpan Data
+                </button>
+                <button
+                  type="reset"
+                  class="inline-flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 font-bold text-sm px-6 py-2.5 transition-colors"
+                >
+                  Reset
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- ============ FORM: SPECIAL ============ -->
+          <div
+            x-show="activeMenu === 'form_special'"
+            x-transition.opacity.duration.300ms
+            x-data="formSpecial()"
+            x-init="init()"
+          >
+            <div class="mb-8">
+              <div
+                class="flex items-center gap-1.5 text-xs font-bold text-primary-mid dark:text-primary-light uppercase tracking-wider mb-2"
+              >
+                <span>Form</span>
+                <span class="text-gray-300 dark:text-gray-600">/</span>
+                <span
+                  class="text-gray-400 dark:text-gray-500 normal-case font-semibold"
+                  >Special</span
+                >
+              </div>
+              <h1
+                class="text-2xl lg:text-3xl font-heading font-extrabold text-dark dark:text-white"
+              >
+                Form Special
+              </h1>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Elemen form yang ditingkatkan dengan plugin pihak ketiga.
+              </p>
+            </div>
+
+            <div
+              class="bg-white dark:bg-gray-800/60 border border-gray-100 dark:border-gray-700/50 rounded-3xl p-6 lg:p-8 shadow-sm"
+            >
+              <h3 class="font-heading font-bold text-dark dark:text-white mb-6">
+                Input Panen &amp; Distribusi
+              </h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Rentang Tanggal Panen
+                    <span
+                      class="ml-1 text-[10px] font-bold text-primary-mid bg-primary-bg dark:bg-primary/20 px-1.5 py-0.5 rounded-full align-middle"
+                      >Flatpickr</span
+                    >
+                  </label>
+                  <input
+                    type="text"
+                    x-ref="harvestDate"
+                    placeholder="Pilih rentang tanggal"
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-dark dark:text-gray-100 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Jam Penjemputan
+                    <span
+                      class="ml-1 text-[10px] font-bold text-primary-mid bg-primary-bg dark:bg-primary/20 px-1.5 py-0.5 rounded-full align-middle"
+                      >Flatpickr</span
+                    >
+                  </label>
+                  <input
+                    type="text"
+                    x-ref="harvestTime"
+                    placeholder="Pilih jam"
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-dark dark:text-gray-100 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    No. Telepon
+                    <span
+                      class="ml-1 text-[10px] font-bold text-accent bg-accent-bg dark:bg-accent/20 px-1.5 py-0.5 rounded-full align-middle"
+                      >IMask</span
+                    >
+                  </label>
+                  <input
+                    type="text"
+                    x-ref="telepon"
+                    placeholder="+62 8xx-xxxx-xxxx"
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-dark dark:text-gray-100 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Harga Jual / Kg
+                    <span
+                      class="ml-1 text-[10px] font-bold text-accent bg-accent-bg dark:bg-accent/20 px-1.5 py-0.5 rounded-full align-middle"
+                      >IMask</span
+                    >
+                  </label>
+                  <input
+                    type="text"
+                    x-ref="harga"
+                    placeholder="Rp 0"
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-dark dark:text-gray-100 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  />
+                </div>
+
+                <div class="md:col-span-2">
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Wilayah Distribusi
+                    <span
+                      class="ml-1 text-[10px] font-bold text-primary-mid bg-primary-bg dark:bg-primary/20 px-1.5 py-0.5 rounded-full align-middle"
+                      >Choices.js</span
+                    >
+                  </label>
+                  <select x-ref="wilayah" multiple>
+                    <option value="jakarta">Jakarta</option>
+                    <option value="bandung">Bandung</option>
+                    <option value="surabaya">Surabaya</option>
+                    <option value="yogyakarta">Yogyakarta</option>
+                    <option value="denpasar">Denpasar</option>
+                    <option value="makassar">Makassar</option>
+                    <option value="medan">Medan</option>
+                  </select>
+                </div>
+
+                <div class="md:col-span-2">
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Catatan Produksi
+                    <span
+                      class="ml-1 text-[10px] font-bold text-primary-mid bg-primary-bg dark:bg-primary/20 px-1.5 py-0.5 rounded-full align-middle"
+                      >Quill</span
+                    >
+                  </label>
+                  <div
+                    x-ref="catatan"
+                    class="bg-gray-50 dark:bg-gray-900 rounded-xl"
+                    style="min-height: 140px"
+                  ></div>
+                </div>
+
+                <div class="md:col-span-2">
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Dokumen Sertifikat Organik
+                    <span
+                      class="ml-1 text-[10px] font-bold text-accent bg-accent-bg dark:bg-accent/20 px-1.5 py-0.5 rounded-full align-middle"
+                      >FilePond</span
+                    >
+                  </label>
+                  <input type="file" x-ref="sertifikat" />
+                </div>
+              </div>
+
+              <div
+                class="flex items-center gap-3 mt-8 pt-6 border-t border-gray-100 dark:border-gray-700/50"
+              >
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center rounded-xl bg-primary hover:bg-primary-mid text-white font-bold text-sm px-6 py-2.5 transition-colors"
+                >
+                  Simpan Data
+                </button>
+                <button
+                  type="button"
+                  class="inline-flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 font-bold text-sm px-6 py-2.5 transition-colors"
+                >
+                  Batal
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============ FORM: CUSTOM ============ -->
+          <div
+            x-show="activeMenu === 'form_custom'"
+            x-transition.opacity.duration.300ms
+            x-data="formCustom()"
+            x-init="init()"
+          >
+            <div class="mb-8">
+              <div
+                class="flex items-center gap-1.5 text-xs font-bold text-primary-mid dark:text-primary-light uppercase tracking-wider mb-2"
+              >
+                <span>Form</span>
+                <span class="text-gray-300 dark:text-gray-600">/</span>
+                <span
+                  class="text-gray-400 dark:text-gray-500 normal-case font-semibold"
+                  >Custom</span
+                >
+              </div>
+              <h1
+                class="text-2xl lg:text-3xl font-heading font-extrabold text-dark dark:text-white"
+              >
+                Form Custom
+              </h1>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Komponen form interaktif buatan sendiri di atas Alpine.js.
+              </p>
+            </div>
+
+            <!-- Wizard -->
+            <div
+              class="bg-white dark:bg-gray-800/60 border border-gray-100 dark:border-gray-700/50 rounded-3xl p-6 lg:p-8 shadow-sm mb-6"
+            >
+              <h3 class="font-heading font-bold text-dark dark:text-white mb-6">
+                Pendaftaran Anggota Baru — Wizard
+              </h3>
+
+              <div class="flex items-center mb-8">
+                <template x-for="n in totalSteps" :key="n">
+                  <div class="flex items-center flex-1 last:flex-none">
+                    <div class="flex flex-col items-center gap-1.5">
+                      <div
+                        class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-extrabold transition-colors duration-300"
+                        :class="step >= n ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-400'"
+                        x-text="n"
+                      ></div>
+                      <span
+                        class="text-[11px] font-bold text-gray-400 whitespace-nowrap"
+                        x-text="stepLabels[n - 1]"
+                      ></span>
+                    </div>
+                    <div
+                      x-show="n < totalSteps"
+                      class="flex-1 h-0.5 mx-3 rounded-full transition-colors duration-300"
+                      :class="step > n ? 'bg-primary' : 'bg-gray-100 dark:bg-gray-700'"
+                    ></div>
+                  </div>
+                </template>
+              </div>
+
+              <div
+                x-show="step === 1"
+                x-transition.opacity
+                class="grid grid-cols-1 md:grid-cols-2 gap-6"
+              >
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                    >Nama Lengkap</label
+                  >
+                  <input
+                    type="text"
+                    x-model="data.nama"
+                    placeholder="cth. Budi Santoso"
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-dark dark:text-gray-100 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  />
+                </div>
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                    >NIK</label
+                  >
+                  <input
+                    type="text"
+                    x-model="data.nik"
+                    placeholder="16 digit NIK"
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-dark dark:text-gray-100 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  />
+                </div>
+              </div>
+
+              <div
+                x-show="step === 2"
+                x-transition.opacity
+                class="grid grid-cols-1 md:grid-cols-2 gap-6"
+              >
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                    >Nama Kebun</label
+                  >
+                  <input
+                    type="text"
+                    x-model="data.kebun"
+                    placeholder="cth. Kebun Sumber Makmur"
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-dark dark:text-gray-100 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  />
+                </div>
+                <div>
+                  <label
+                    class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                    >Komoditas Utama</label
+                  >
+                  <input
+                    type="text"
+                    x-model="data.komoditas"
+                    placeholder="cth. Manggis"
+                    class="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 px-4 py-2.5 text-sm font-medium text-dark dark:text-gray-100 placeholder:text-gray-400 placeholder:font-normal focus:outline-none focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all"
+                  />
+                </div>
+              </div>
+
+              <div
+                x-show="step === 3"
+                x-transition.opacity
+                class="bg-primary-bg dark:bg-gray-900 rounded-2xl p-5 space-y-2 text-sm"
+              >
+                <p class="font-bold text-dark dark:text-white mb-2">
+                  Konfirmasi Data
+                </p>
+                <p class="text-gray-600 dark:text-gray-300">
+                  <span class="font-semibold">Nama:</span>
+                  <span x-text="data.nama || '—'"></span>
+                </p>
+                <p class="text-gray-600 dark:text-gray-300">
+                  <span class="font-semibold">NIK:</span>
+                  <span x-text="data.nik || '—'"></span>
+                </p>
+                <p class="text-gray-600 dark:text-gray-300">
+                  <span class="font-semibold">Kebun:</span>
+                  <span x-text="data.kebun || '—'"></span>
+                </p>
+                <p class="text-gray-600 dark:text-gray-300">
+                  <span class="font-semibold">Komoditas:</span>
+                  <span x-text="data.komoditas || '—'"></span>
+                </p>
+              </div>
+
+              <div
+                class="flex items-center justify-between mt-8 pt-6 border-t border-gray-100 dark:border-gray-700/50"
+              >
+                <button
+                  type="button"
+                  @click="prevStep()"
+                  x-show="step > 1"
+                  class="inline-flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 font-bold text-sm px-6 py-2.5 transition-colors"
+                >
+                  Kembali
+                </button>
+                <div x-show="step === 1"></div>
+                <button
+                  type="button"
+                  @click="nextStep()"
+                  x-show="step < totalSteps"
+                  class="inline-flex items-center justify-center rounded-xl bg-primary hover:bg-primary-mid text-white font-bold text-sm px-6 py-2.5 transition-colors ml-auto"
+                >
+                  Lanjut
+                </button>
+                <button
+                  type="button"
+                  x-show="step === totalSteps"
+                  class="inline-flex items-center justify-center rounded-xl bg-accent hover:opacity-90 text-white font-bold text-sm px-6 py-2.5 transition-colors ml-auto"
+                >
+                  Daftarkan Anggota
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Rating -->
+              <div
+                class="bg-white dark:bg-gray-800/60 border border-gray-100 dark:border-gray-700/50 rounded-3xl p-6 shadow-sm"
+              >
+                <label
+                  class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3"
+                  >Rating Kualitas Panen Terakhir</label
+                >
+                <div
+                  class="flex items-center gap-1.5"
+                  @mouseleave="hoverRating = 0"
+                >
+                  <template x-for="n in 5" :key="n">
+                    <button
+                      type="button"
+                      @click="rating = n"
+                      @mouseenter="hoverRating = n"
+                      class="transition-transform hover:scale-110"
+                    >
+                      <svg
+                        class="w-8 h-8"
+                        :class="(hoverRating || rating) >= n ? 'fill-accent text-accent' : 'fill-transparent text-gray-300 dark:text-gray-600'"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+                        ></path>
+                      </svg>
+                    </button>
+                  </template>
+                  <span
+                    class="ml-2 text-sm font-bold text-gray-500"
+                    x-text="rating ? rating + '/5' : 'Belum dinilai'"
+                  ></span>
+                </div>
+              </div>
+
+              <!-- Warna label -->
+              <div
+                class="bg-white dark:bg-gray-800/60 border border-gray-100 dark:border-gray-700/50 rounded-3xl p-6 shadow-sm"
+              >
+                <label
+                  class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-3"
+                  >Warna Label Kategori</label
+                >
+                <div class="flex items-center gap-3 flex-wrap">
+                  <template x-for="c in colors" :key="c">
+                    <button
+                      type="button"
+                      @click="selectedColor = c"
+                      class="w-8 h-8 rounded-full ring-offset-2 ring-offset-white dark:ring-offset-gray-800 transition-all"
+                      :style="'background-color:' + c"
+                      :class="selectedColor === c ? 'ring-2 ring-dark dark:ring-white scale-110' : ''"
+                    ></button>
+                  </template>
+                  <input
+                    type="color"
+                    x-model="selectedColor"
+                    class="w-8 h-8 rounded-full border-none cursor-pointer"
+                  />
+                </div>
+                <p class="text-xs text-gray-400 mt-3">
+                  Terpilih:
+                  <span
+                    class="font-mono font-bold"
+                    x-text="selectedColor"
+                  ></span>
+                </p>
+              </div>
+
+              <!-- Tags -->
+              <div
+                class="lg:col-span-2 bg-white dark:bg-gray-800/60 border border-gray-100 dark:border-gray-700/50 rounded-3xl p-6 shadow-sm"
+              >
+                <label
+                  class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
+                >
+                  Label Produk
+                  <span
+                    class="ml-1 text-[10px] font-bold text-primary-mid bg-primary-bg dark:bg-primary/20 px-1.5 py-0.5 rounded-full align-middle"
+                    >Tagify</span
+                  >
+                </label>
+                <input
+                  type="text"
+                  x-ref="tagsInput"
+                  value="Organik, Panen Baru"
+                  placeholder="Tambah label..."
+                />
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+    <!-- Plugin form pihak ketiga (versi terbaru per Agustus 2026) -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13"></script>
+    <script src="https://npmcdn.com/flatpickr@4.6.13/dist/l10n/id.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js@11.0.4/public/assets/scripts/choices.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/imask@7.6.1/dist/imask.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/filepond-plugin-image-preview@4.6.12/dist/filepond-plugin-image-preview.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/filepond@4.31.1/dist/filepond.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify@4.31.4/dist/tagify.min.js"></script>
+
+    <script
+      defer
+      src="https://unpkg.com/@alpinejs/collapse@3.14.1/dist/cdn.min.js"
+    ></script>
+    <script
+      defer
+      src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"
+    ></script>
+
+    <script src="assets/js/charts.js"></script>
+    <script src="assets/js/forms.js"></script>
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>

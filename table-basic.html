@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Table Basic - Nameera ui</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css" />
+  </head>
+
+  <body
+    x-data="adminApp()"
+    x-init="initApp()"
+    class="bg-slate-100 text-gray-800 antialiased overflow-hidden selection:bg-primary-light selection:text-dark transition-colors duration-300 dark:bg-[#0f172a]"
+  >
+    <div class="flex h-screen w-full relative p-0 lg:p-4 gap-4">
+      <div
+        x-show="isMobile && sidebarOpen"
+        x-transition.opacity
+        @click="sidebarOpen = false"
+        class="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden"
+      ></div>
+
+      <!-- SIDEBAR -->
+      <aside
+        :class="{'translate-x-0 w-[280px]': sidebarOpen, '-translate-x-full w-[280px]': !sidebarOpen && isMobile, 'translate-x-0 w-[88px]': !sidebarOpen && !isMobile}"
+        class="fixed lg:relative z-50 h-full transition-all duration-400 ease-out bg-[#142414] dark:bg-gray-900 text-white flex flex-col shadow-2xl lg:rounded-3xl shrink-0 overflow-hidden border border-white/5 dark:border-gray-800"
+      >
+        <div
+          class="h-20 flex items-center px-6 border-b border-white/5 shrink-0"
+        >
+          <div
+            class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-light to-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/30"
+          >
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
+              ></path>
+            </svg>
+          </div>
+          <span
+            x-show="sidebarOpen"
+            class="ml-4 font-heading font-extrabold text-xl text-white tracking-wide whitespace-nowrap"
+            >Nameera <span class="text-primary-light">ui</span></span
+          >
+        </div>
+
+        <nav class="flex-1 overflow-y-auto p-4 space-y-1.5 scrollbar-hide">
+          <p
+            x-show="sidebarOpen"
+            class="px-4 text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-3 mt-2"
+          >
+            Main Menu
+          </p>
+
+          <a
+            href="index.html"
+            class="text-gray-400 hover:bg-white/5 hover:text-white flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 whitespace-nowrap group"
+          >
+            <div
+              class="text-gray-400 group-hover:text-primary-light transition-colors"
+            >
+              <svg
+                class="w-5 h-5 shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                ></path>
+              </svg>
+            </div>
+            <span x-show="sidebarOpen" class="font-bold text-sm tracking-wide"
+              >Home</span
+            >
+          </a>
+
+          <!-- form (Ditutup) -->
+          <div x-data="{ open: false }" class="whitespace-nowrap">
+            <button
+              @click="open = !open"
+              class="text-gray-400 hover:bg-white/5 hover:text-white w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-300 group"
+            >
+              <div class="flex items-center gap-4">
+                <div
+                  class="text-gray-400 group-hover:text-primary-light transition-colors"
+                >
+                  <svg
+                    class="w-5 h-5 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    ></path>
+                  </svg>
+                </div>
+                <span
+                  x-show="sidebarOpen"
+                  class="font-bold text-sm tracking-wide"
+                  >Form</span
+                >
+              </div>
+              <svg
+                x-show="sidebarOpen"
+                :class="open ? 'rotate-180' : ''"
+                class="w-4 h-4 transition-transform duration-300 text-gray-500 group-hover:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </button>
+            <div
+              x-show="open && sidebarOpen"
+              x-collapse
+              class="pl-[3.25rem] pr-4 py-1 space-y-1"
+            >
+              <a
+                href="form-basic.html"
+                class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
+                >basic</a
+              >
+              <a
+                href="form-special.html"
+                class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
+                >special</a
+              >
+              <a
+                href="form-custom.html"
+                class="text-gray-400 hover:text-white flex justify-between items-center text-sm py-2 transition-colors"
+              >
+                <span>Custom</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- table (Terbuka, Basic Aktif) -->
+          <div x-data="{ open: true }" class="whitespace-nowrap">
+            <button
+              @click="open = !open"
+              class="bg-white/10 text-white w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-300 group"
+            >
+              <div class="flex items-center gap-4">
+                <div class="text-white transition-colors">
+                  <svg
+                    class="w-5 h-5 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 10h18M3 6h18M3 14h18M3 18h18"
+                    ></path>
+                  </svg>
+                </div>
+                <span
+                  x-show="sidebarOpen"
+                  class="font-bold text-sm tracking-wide"
+                  >Data Table</span
+                >
+              </div>
+              <svg
+                x-show="sidebarOpen"
+                :class="open ? 'rotate-180' : ''"
+                class="w-4 h-4 transition-transform duration-300 text-gray-500 group-hover:text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                ></path>
+              </svg>
+            </button>
+            <div
+              x-show="open && sidebarOpen"
+              x-collapse
+              class="pl-[3.25rem] pr-4 py-1 space-y-1"
+            >
+              <a
+                href="data-table-basic.html"
+                class="text-primary-light font-bold block text-sm py-2 transition-colors"
+                >basic</a
+              >
+              <a
+                href="data-table-special.html"
+                class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
+                >special</a
+              >
+              <a
+                href="data-table-custom.html"
+                class="text-gray-400 hover:text-white flex justify-between items-center text-sm py-2 transition-colors"
+              >
+                <span>Custom</span>
+              </a>
+            </div>
+          </div>
+        </nav>
+
+        <div class="p-4 shrink-0">
+          <div
+            class="p-2 rounded-2xl bg-white/5 border border-white/10 flex items-center gap-3 hover:bg-white/10 transition-colors cursor-pointer"
+          >
+            <div
+              class="w-10 h-10 rounded-xl bg-primary-mid overflow-hidden shrink-0"
+            >
+              <img
+                src="https://ui-avatars.com/api/?name=Admin+Diskominfo&background=639922&color=fff&rounded=true"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <div x-show="sidebarOpen" class="flex-1 overflow-hidden pr-2">
+              <h4 class="text-sm font-bold text-white truncate">
+                Administrator
+              </h4>
+              <p class="text-xs text-gray-400 font-medium truncate">
+                admin@subang.go.id
+              </p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <div
+        class="flex-1 flex flex-col h-full bg-white dark:bg-gray-800 lg:rounded-3xl shadow-xl border border-gray-200/50 dark:border-gray-700 overflow-hidden relative transition-colors duration-300"
+      >
+        <!-- HEADER (Dipangkas untuk ringkas, gunakan kode header yang sama) -->
+        <header
+          class="h-20 bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl border-b border-gray-100 dark:border-gray-700/50 z-30 flex items-center justify-between px-6 lg:px-8 shrink-0 transition-colors duration-300 sticky top-0"
+        >
+          <!-- Tombol toggle sidebar & pencarian -->
+          <div class="flex items-center gap-4">
+            <button
+              @click="sidebarOpen = !sidebarOpen"
+              class="w-10 h-10 flex items-center justify-center rounded-xl text-gray-500 hover:text-dark hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 transition-colors"
+            >
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M4 6h16M4 12h16M4 18h7"
+                ></path>
+              </svg>
+            </button>
+            <div class="hidden md:flex relative group">
+              <div
+                class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none"
+              >
+                <svg
+                  class="w-4 h-4 text-gray-400 group-focus-within:text-primary transition-colors"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  ></path>
+                </svg>
+              </div>
+              <input
+                type="text"
+                placeholder="Cari data atau menu..."
+                class="block w-64 pl-11 pr-4 py-2.5 bg-gray-50 dark:bg-gray-900 border-none rounded-full text-sm focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-gray-800 transition-all font-medium text-gray-700 dark:text-gray-200"
+              />
+            </div>
+          </div>
+          <!-- Notifikasi & Dark Mode Toggle -->
+          <div class="flex items-center gap-3">
+            <button
+              type="button"
+              @click="isDarkMode = !isDarkMode"
+              aria-label="Ganti mode gelap/terang"
+              class="relative w-10 h-10 flex items-center justify-center rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 transition-colors overflow-hidden"
+            >
+              <svg
+                x-show="!isDarkMode"
+                class="absolute w-5 h-5 fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"
+                />
+              </svg>
+              <svg
+                x-show="isDarkMode"
+                x-cloak
+                class="absolute w-5 h-5 fill-current"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z"
+                />
+              </svg>
+            </button>
+          </div>
+        </header>
+
+        <main
+          class="flex-1 overflow-y-auto p-6 lg:p-10 transition-colors duration-300"
+          id="main-scroll"
+        >
+          <div class="mb-8">
+            <div
+              class="flex items-center gap-1.5 text-xs font-bold text-primary-mid dark:text-primary-light uppercase tracking-wider mb-2"
+            >
+              <span>Data Table</span>
+              <span class="text-gray-300 dark:text-gray-600">/</span>
+              <span
+                class="text-gray-400 dark:text-gray-500 normal-case font-semibold"
+                >Basic</span
+              >
+            </div>
+            <h1
+              class="text-2xl lg:text-3xl font-heading font-extrabold text-dark dark:text-white"
+            >
+              Basic Table
+            </h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Tabel HTML bawaan dengan gaya Tailwind murni, cocok dirender dari
+              server.
+            </p>
+          </div>
+
+          <div
+            class="bg-white dark:bg-gray-800/60 border border-gray-100 dark:border-gray-700/50 rounded-3xl shadow-sm overflow-hidden"
+          >
+            <div
+              class="p-6 border-b border-gray-100 dark:border-gray-700/50 flex justify-between items-center"
+            >
+              <h3 class="font-heading font-bold text-dark dark:text-white">
+                Daftar Surat Masuk
+              </h3>
+              <button
+                class="bg-primary hover:bg-primary-mid text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors"
+              >
+                + Tambah Surat
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="bg-gray-50 dark:bg-gray-900/50">
+                    <th
+                      class="px-6 py-4 text-sm font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap"
+                    >
+                      No. Agenda
+                    </th>
+                    <th
+                      class="px-6 py-4 text-sm font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap"
+                    >
+                      Asal Instansi
+                    </th>
+                    <th
+                      class="px-6 py-4 text-sm font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap"
+                    >
+                      Perihal
+                    </th>
+                    <th
+                      class="px-6 py-4 text-sm font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap"
+                    >
+                      Tanggal Diterima
+                    </th>
+                    <th
+                      class="px-6 py-4 text-sm font-bold text-gray-700 dark:text-gray-300 whitespace-nowrap"
+                    >
+                      Sifat
+                    </th>
+                    <th
+                      class="px-6 py-4 text-sm font-bold text-gray-700 dark:text-gray-300 text-center whitespace-nowrap"
+                    >
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-gray-700/50">
+                  <tr
+                    class="hover:bg-gray-50/50 dark:hover:bg-gray-700/20 transition-colors"
+                  >
+                    <td
+                      class="px-6 py-4 text-sm font-medium text-dark dark:text-gray-200"
+                    >
+                      001/SM/VIII/2026
+                    </td>
+                    <td
+                      class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400"
+                    >
+                      Dinas Kesehatan Provinsi
+                    </td>
+                    <td
+                      class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400"
+                    >
+                      Undangan Rapat Koordinasi
+                    </td>
+                    <td
+                      class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400"
+                    >
+                      01 Ags 2026
+                    </td>
+                    <td class="px-6 py-4">
+                      <span
+                        class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                        >Segera</span
+                      >
+                    </td>
+                    <td
+                      class="px-6 py-4 text-center space-x-2 whitespace-nowrap"
+                    >
+                      <button
+                        class="text-primary hover:text-primary-mid font-medium text-sm"
+                      >
+                        Lihat
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script
+      defer
+      src="https://unpkg.com/@alpinejs/collapse@3.14.1/dist/cdn.min.js"
+    ></script>
+    <script
+      defer
+      src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"
+    ></script>
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>
