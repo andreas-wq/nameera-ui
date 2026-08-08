@@ -38,12 +38,12 @@
       Main Menu
     </p>
 
-    <!-- Menu Home (Aktif) -->
+    <!-- Menu Dashboard / Home -->
     <a
-      href="#"
-      class="bg-primary/90 text-white shadow-md shadow-primary/20 backdrop-blur-md flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 whitespace-nowrap group"
+      href="{{ url('nameera/dashboard') }}"
+      class="{{ request()->is('nameera/dashboard') ? 'bg-primary/90 text-white shadow-md shadow-primary/20 backdrop-blur-md' : 'text-gray-400 hover:bg-white/5 hover:text-white' }} flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 whitespace-nowrap group"
     >
-      <div class="text-white transition-colors">
+      <div class="{{ request()->is('nameera/dashboard') ? 'text-white' : 'text-gray-400 group-hover:text-primary-light' }} transition-colors">
         <svg
           class="w-5 h-5 shrink-0"
           fill="none"
@@ -64,7 +64,7 @@
     </a>
 
     <!-- Form menu -->
-    <div x-data="{ open: false }" class="whitespace-nowrap mt-2">
+    <div x-data="{ open: {{ request()->is('nameera/form-*') ? 'true' : 'false' }} }" class="whitespace-nowrap mt-2">
       <button
         @click="open = !open"
         class="text-gray-400 hover:bg-white/5 hover:text-white w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-300 group"
@@ -115,15 +115,25 @@
         class="pl-[3.25rem] pr-4 py-1 space-y-1"
       >
         <a
-          href="{{ url('forms/basic') }}"
-          class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
+          href="{{ url('nameera/form-basic') }}"
+          class="{{ request()->is('nameera/form-basic') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
           >Basic Form</a
+        >
+        <a
+          href="{{ url('nameera/form-special') }}"
+          class="{{ request()->is('nameera/form-special') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
+          >Special Form</a
+        >
+        <a
+          href="{{ url('nameera/form-custom') }}"
+          class="{{ request()->is('nameera/form-custom') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
+          >Custom Form</a
         >
       </div>
     </div>
 
     <!-- Table menu -->
-    <div x-data="{ open: false }" class="whitespace-nowrap">
+    <div x-data="{ open: {{ request()->is('nameera/table-*') ? 'true' : 'false' }} }" class="whitespace-nowrap">
       <button
         @click="open = !open"
         class="text-gray-400 hover:bg-white/5 hover:text-white w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-300 group"
@@ -174,25 +184,25 @@
         class="pl-[3.25rem] pr-4 py-1 space-y-1"
       >
         <a
-          href="{{ url('tables/basic') }}"
-          class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
+          href="{{ url('nameera/table-basic') }}"
+          class="{{ request()->is('nameera/table-basic') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
           >Basic Table</a
         >
         <a
-          href="{{ url('tables/special') }}"
-          class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
-          >List.js Table</a
+          href="{{ url('nameera/table-special') }}"
+          class="{{ request()->is('nameera/table-special') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
+          >Special Table</a
         >
         <a
-          href="{{ url('tables/custom') }}"
-          class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
-          >Alpine Table</a
+          href="{{ url('nameera/table-custom') }}"
+          class="{{ request()->is('nameera/table-custom') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
+          >Custom Table</a
         >
       </div>
     </div>
 
     <!-- Components menu -->
-    <div x-data="{ open: false }" class="whitespace-nowrap">
+    <div x-data="{ open: {{ request()->is('nameera/comp-*') ? 'true' : 'false' }} }" class="whitespace-nowrap">
       <button
         @click="open = !open"
         class="text-gray-400 hover:bg-white/5 hover:text-white w-full flex items-center justify-between px-4 py-3.5 rounded-2xl transition-all duration-300 group"
@@ -243,35 +253,35 @@
         class="pl-[3.25rem] pr-4 py-1 space-y-1"
       >
         <a
-          href="{{ url('components/base') }}"
-          class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
+          href="{{ url('nameera/comp-base') }}"
+          class="{{ request()->is('nameera/comp-base') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
           >Base UI</a
         >
         <a
-          href="{{ url('components/nav') }}"
-          class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
+          href="{{ url('nameera/comp-nav') }}"
+          class="{{ request()->is('nameera/comp-nav') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
           >Navigation</a
         >
         <a
-          href="{{ url('components/feedback') }}"
-          class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
+          href="{{ url('nameera/comp-feedback') }}"
+          class="{{ request()->is('nameera/comp-feedback') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
           >Feedback</a
         >
         <a
-          href="{{ url('components/data') }}"
-          class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
+          href="{{ url('nameera/comp-data') }}"
+          class="{{ request()->is('nameera/comp-data') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
           >Data Display</a
         >
         <a
-          href="{{ url('components/advanced') }}"
-          class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
+          href="{{ url('nameera/comp-advanced') }}"
+          class="{{ request()->is('nameera/comp-advanced') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
           >Advanced</a
         >
       </div>
     </div>
 
     <!-- Auth Pages menu -->
-    <div x-data="{ open: false }" class="whitespace-nowrap mt-4">
+    <div x-data="{ open: {{ request()->is('nameera/login') || request()->is('nameera/register') || request()->is('nameera/error-404') ? 'true' : 'false' }} }" class="whitespace-nowrap mt-4">
       <p
         x-show="sidebarOpen"
         class="px-4 text-[10px] font-bold uppercase tracking-wider text-gray-500 mb-3"
@@ -328,18 +338,18 @@
         class="pl-[3.25rem] pr-4 py-1 space-y-1"
       >
         <a
-          href="{{ route('login') }}"
-          class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
+          href="{{ url('nameera/login') }}"
+          class="{{ request()->is('nameera/login') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
           >Login</a
         >
         <a
-          href="{{ route('register') }}"
-          class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
+          href="{{ url('nameera/register') }}"
+          class="{{ request()->is('nameera/register') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
           >Register</a
         >
         <a
-          href="{{ url('error/404') }}"
-          class="text-gray-400 hover:text-white block text-sm py-2 transition-colors"
+          href="{{ url('nameera/error-404') }}"
+          class="{{ request()->is('nameera/error-404') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
           >Error 404</a
         >
       </div>
