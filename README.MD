@@ -1,9 +1,6 @@
-Berikut adalah perbaikan penuh untuk file **`README.md`** paket **Nameera UI**. Dokumentasi ini sudah menyempurnakan bagian konfigurasi **Tailwind CSS v4** (termasuk pendaftaran `@variant dark` yang wajib agar Dark Mode berjalan), penyetelan `resources/js/app.js`, serta memperjelas seluruh alur instalasi agar bebas dari bug.
+# Nameera UI — Laravel Premium Admin Template
 
-````markdown
-# Nameera UI - Laravel Premium Admin Template
-
-Nameera UI adalah starter kit antarmuka admin kelas atas yang dibangun khusus untuk ekosistem Laravel. Dirancang menggunakan **Tailwind CSS**, **Alpine.js**, dan **Chart.js**, package ini menawarkan pendekatan _plug-and-play_.
+Nameera UI adalah starter kit antarmuka admin kelas atas yang dibangun khusus untuk ekosistem Laravel. Dirancang menggunakan **Tailwind CSS**, **Alpine.js** (via CDN), dan **Chart.js**, package ini menawarkan pendekatan _plug-and-play_.
 
 Tanpa perlu konfigurasi _frontend_ yang rumit, Anda bisa langsung memiliki _dashboard_ modern, form, tabel, dan halaman autentikasi yang sepenuhnya responsif dalam hitungan detik.
 
@@ -11,10 +8,11 @@ Tanpa perlu konfigurasi _frontend_ yang rumit, Anda bisa langsung memiliki _dash
 
 ## 🌟 Fitur Utama
 
-- **Plug & Play:** Terintegrasi langsung dengan Laravel melalui Service Provider.
-- **Modern Stack:** Support Tailwind CSS v3 & v4 (via Vite) serta Alpine.js.
+- **Plug & Play:** Terintegrasi langsung dengan Laravel melalui Service Provider (auto-discovery).
+- **Modern Stack:** Support Tailwind CSS v3 & v4 (via Vite), Alpine.js (CDN), dan Chart.js (CDN).
 - **Komponen Lengkap:** Buttons, Badges, Modals, Toasts, Skeletons, Sidenav, dll.
 - **Halaman Siap Pakai:** Dashboard Analytics, Login, Register, 404 Error (Standalone Page).
+- **Form Lengkap:** Form dasar, form dengan plugin pihak ketiga (Flatpickr, Quill, Choices.js, IMask, FilePond, Tagify), dan form multi-step.
 - **Advanced Data Tables:** Dukungan untuk tabel dasar, List.js, dan Alpine-based tables.
 - **Dark Mode Ready:** Sistem mode gelap bawaan dengan pencegahan _flash of wrong theme_ (FOUC).
 
@@ -22,90 +20,93 @@ Tanpa perlu konfigurasi _frontend_ yang rumit, Anda bisa langsung memiliki _dash
 
 ## 🚀 Persyaratan Sistem
 
-- **PHP:** ^8.1
-- **Laravel:** ^10.0 atau ^11.0
-- **Node.js & Vite:** Diperlukan untuk kompilasi aset front-end aplikasi utama.
+| Komponen           | Versi                                     |
+| ------------------ | ----------------------------------------- |
+| **PHP**            | ^8.1                                      |
+| **Laravel**        | ^10.0 / ^11.0 / ^12.0 / ^13.0             |
+| **Node.js & Vite** | Diperlukan untuk kompilasi aset front-end |
 
 ---
 
-## 📦 Cara Instalasi
+## 📦 Cara Instalasi (Step-by-Step)
 
-### Langkah 1: Tambahkan Repositori (vcs)
+### Langkah 1: Tambahkan Repositori (VCS)
 
-Buka file `composer.json` di proyek Laravel utama Anda, dan tambahkan blok `repositories` berikut:
+Buka file `composer.json` di proyek Laravel utama Anda, dan tambahkan blok `repositories`:
 
 ```json
 "repositories": [
     {
         "type": "vcs",
-        "url": "[https://github.com/andreas-wq/nameera-ui.git](https://github.com/andreas-wq/nameera-ui.git)"
+        "url": "https://github.com/andreas-wq/nameera-ui.git"
     }
 ]
 ```
-````
 
-> **Tips Development Lokal:** Jika mengembangkan paket di komputer yang sama, Anda juga dapat menggunakan lokasi folder lokal:
+> **Tips Development Lokal:** Jika mengembangkan paket di komputer yang sama, gunakan tipe `path`:
 >
 > ```json
 > "repositories": [
 >     {
 >         "type": "path",
->         "url": "../packages/nameera/ui-template"
+>         "url": "../nameera-ui"
 >     }
 > ]
->
 > ```
 
 ---
 
 ### Langkah 2: Install Package via Composer
 
-Jalankan perintah berikut di terminal proyek Laravel Anda:
-
 ```bash
 composer require nameera/ui-template
-
 ```
+
+> Package akan otomatis ter-discover oleh Laravel melalui `NameeraUiServiceProvider` (tidak perlu daftar manual di `config/app.php`).
 
 ---
 
-### Langkah 3: Publikasikan Aset Kustom (Wajib)
-
-Package ini menyediakan file CSS dan JS bawaan yang perlu dipublikasikan ke folder `public/vendor/nameera`. Jalankan perintah:
+### Langkah 3: Publikasikan Aset (Wajib)
 
 ```bash
 php artisan vendor:publish --tag=nameera-assets
-
 ```
 
-Langkah ini akan mengekstrak file berikut:
+Perintah ini akan meng-copy file-file berikut ke folder `public/vendor/nameera/`:
 
-- `public/vendor/nameera/css/style.css`
-- `public/vendor/nameera/js/app.js`
+```
+public/vendor/nameera/
+├── css/
+│   └── style.css       ← Variabel warna, font, scrollbar, tema plugin
+├── js/
+│   ├── app.js          ← Logika Alpine (sidebar, dark mode, custom table)
+│   └── forms.js        ← Logika Alpine untuk form special & custom
+```
 
 ---
 
 ### Langkah 4: Konfigurasi CSS (Tailwind v4 / v3)
 
-Pilih konfigurasi yang sesuai dengan versi Tailwind CSS pada proyek Laravel Anda:
+Pilih konfigurasi sesuai versi Tailwind CSS pada proyek Laravel Anda.
 
 #### Opsi A: Tailwind CSS v4 (Laravel 11+ / Default Terbaru)
 
-Buka file **`resources/css/app.css`** di proyek utama Anda dan susun sesuai struktur berikut:
+Buka file **`resources/css/app.css`** di proyek utama Anda dan **ganti seluruh isinya** dengan:
 
 ```css
+/* 1. Import Tailwind CSS v4 */
 @import "tailwindcss";
 
-/* 1. Wajib: Daftarkan variant 'dark' agar Dark Mode berjalan dengan class .dark di <html> */
+/* 2. Wajib: Daftarkan variant 'dark' agar class-based Dark Mode berjalan */
 @variant dark (&:where(.dark, .dark *));
 
-/* 2. Daftarkan path pemindaian view package Nameera UI */
+/* 3. Scan semua view package Nameera UI agar utility class-nya ter-generate */
 @source "../../vendor/nameera/ui-template/resources/views/**/*.blade.php";
 
-/* 3. Import CSS variabel bawaan package */
-@import "../../public/vendor/nameera/css/style.css";
+/* 4. Import CSS variabel bawaan package (dari source, bukan dari public) */
+@import "../../vendor/nameera/ui-template/public/css/style.css";
 
-/* 4. Definisikan pemetaan warna & font di @theme */
+/* 5. Definisikan pemetaan warna & font di @theme */
 @theme {
   --color-primary: var(--primary, #3b6d11);
   --color-primary-mid: var(--primary-mid, #639922);
@@ -118,18 +119,20 @@ Buka file **`resources/css/app.css`** di proyek utama Anda dan susun sesuai stru
   --color-dark: var(--dark, #1a2e1a);
   --color-dark-mid: var(--dark-mid, #27500a);
 
-  --font-heading: var(--font-heading), "Plus Jakarta Sans", sans-serif;
-  --font-body: var(--font-body), "Nunito", sans-serif;
+  --font-heading: var(--font-heading, "Plus Jakarta Sans", sans-serif);
+  --font-body: var(--font-body, "Nunito", sans-serif);
 
-  --radius-xl: 0.75rem;
-  --radius-2xl: 1rem;
-  --radius-3xl: 1.5rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
 }
 ```
 
+> **Catatan:** File contoh lengkap juga tersedia di `vendor/nameera/ui-template/examples/tailwind-v4-app.css`.
+
 #### Opsi B: Tailwind CSS v3 (File `tailwind.config.js`)
 
-Jika proyek Anda masih menggunakan Tailwind v3, tambahkan path views package ke dalam array `content` di file **`tailwind.config.js`**:
+Tambahkan path views package ke array `content` di **`tailwind.config.js`**:
 
 ```javascript
 export default {
@@ -168,10 +171,10 @@ export default {
 };
 ```
 
-Dan import `style.css` pada bagian paling atas file **`resources/css/app.css`**:
+Dan atur **`resources/css/app.css`** menjadi:
 
 ```css
-@import "../../public/vendor/nameera/css/style.css";
+@import "../../vendor/nameera/ui-template/public/css/style.css";
 
 @tailwind base;
 @tailwind components;
@@ -180,54 +183,129 @@ Dan import `style.css` pada bagian paling atas file **`resources/css/app.css`**:
 
 ---
 
-### Langkah 5: Konfigurasi JavaScript & Alpine.js
+### Langkah 5: Konfigurasi JavaScript
 
-Buka file **`resources/js/app.js`** proyek utama Anda untuk menginisialisasi Alpine.js:
+#### ⚠️ PENTING — Jangan Install Alpine.js via NPM
+
+Package ini sudah memuat **Alpine.js** dan **Alpine Collapse** melalui CDN di dalam layout Blade bawaan:
+
+```html
+<!-- Sudah dimuat otomatis oleh layout package -->
+<script
+  defer
+  src="https://unpkg.com/@alpinejs/collapse@3.14.1/dist/cdn.min.js"
+></script>
+<script defer src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+```
+
+Jika proyek Laravel Anda belum memiliki file **`resources/js/app.js`**, cukup buat file kosong atau minimal:
 
 ```javascript
-import Alpine from "alpinejs";
+// resources/js/app.js
+// Alpine.js sudah dimuat via CDN oleh Nameera UI layout.
+// Jangan import Alpine di sini untuk menghindari konflik double-initialization.
+```
 
-window.Alpine = Alpine;
-Alpine.start();
+> **Jika proyek Anda sudah menggunakan Alpine via npm** (`import Alpine from 'alpinejs'`), Anda perlu memilih salah satu:
+>
+> 1. **Hapus** import Alpine dari `resources/js/app.js` (gunakan CDN dari package), **atau**
+> 2. **Override** layout Blade package untuk menghapus tag `<script>` CDN Alpine, lalu gunakan Alpine dari npm Anda sendiri.
+
+---
+
+### Langkah 6: Pastikan Vite Memproses File CSS & JS
+
+Pastikan file **`vite.config.js`** di proyek Anda memproses `resources/css/app.css` dan `resources/js/app.js`:
+
+```javascript
+import { defineConfig } from "vite";
+import laravel from "laravel-vite-plugin";
+
+export default defineConfig({
+  plugins: [
+    laravel({
+      input: ["resources/css/app.css", "resources/js/app.js"],
+      refresh: true,
+    }),
+  ],
+});
 ```
 
 ---
 
-### Langkah 6: Kompilasi Aset Vite
-
-Setelah menyelesaikan seluruh konfigurasi di atas, jalankan perintah kompilasi Vite:
+### Langkah 7: Kompilasi Aset & Jalankan
 
 ```bash
-npm run build
-# Atau untuk mode development:
+# Development (dengan hot-reload)
 npm run dev
 
+# Atau build untuk production
+npm run build
+```
+
+Lalu jalankan server Laravel:
+
+```bash
+php artisan serve
+```
+
+Buka browser dan akses: **`http://localhost:8000/nameera/dashboard`** 🎉
+
+---
+
+## ✅ Checklist Instalasi (Quick Reference)
+
+```
+1. [ ] Tambahkan repositori VCS di composer.json
+2. [ ] composer require nameera/ui-template
+3. [ ] php artisan vendor:publish --tag=nameera-assets
+4. [ ] Konfigurasi resources/css/app.css (Tailwind v4 atau v3)
+5. [ ] Pastikan resources/js/app.js TIDAK mengimport Alpine.js
+6. [ ] npm run dev (atau npm run build)
+7. [ ] php artisan serve → buka /nameera/dashboard
 ```
 
 ---
 
-## 🎯 Cara Menggunakan
+## 🎯 Halaman & Route yang Tersedia
 
-Package ini secara otomatis memuat route kustom melalui `NameeraServiceProvider`. Anda dapat mengakses halaman sampel berikut di browser (prefix `/nameera`):
+Semua route menggunakan prefix `/nameera`. Berikut daftar lengkap halaman yang bisa diakses:
 
-- **Dashboard** – `/nameera/dashboard`
-- **Login (Standalone)** – `/nameera/login`
-- **Register (Standalone)** – `/nameera/register`
-- **404 Error Page** – `/nameera/error-404`
+### Halaman Utama
 
-**Komponen UI:**
+| Halaman             | URL                  | Keterangan                   |
+| ------------------- | -------------------- | ---------------------------- |
+| Dashboard Analytics | `/nameera/dashboard` | Menggunakan layout + sidebar |
+| Login               | `/nameera/login`     | Standalone (tanpa sidebar)   |
+| Register            | `/nameera/register`  | Standalone (tanpa sidebar)   |
+| Error 404           | `/nameera/error-404` | Standalone (tanpa sidebar)   |
 
-- Base UI – `/nameera/comp-base`
-- Navigation – `/nameera/comp-nav`
-- Feedback – `/nameera/comp-feedback`
-- Data Display – `/nameera/comp-data`
-- Advanced Widgets – `/nameera/comp-advanced`
+### Komponen UI
 
-**Tabel:**
+| Halaman          | URL                      |
+| ---------------- | ------------------------ |
+| Base UI          | `/nameera/comp-base`     |
+| Navigation       | `/nameera/comp-nav`      |
+| Feedback         | `/nameera/comp-feedback` |
+| Data Display     | `/nameera/comp-data`     |
+| Advanced Widgets | `/nameera/comp-advanced` |
 
-- Basic Table – `/nameera/table-basic`
-- Special Table – `/nameera/table-special`
-- Custom Table – `/nameera/table-custom`
+### Tabel
+
+| Halaman       | URL                      | Keterangan                  |
+| ------------- | ------------------------ | --------------------------- |
+| Basic Table   | `/nameera/table-basic`   | Tabel HTML statis           |
+| Special Table | `/nameera/table-special` | Menggunakan List.js (CDN)   |
+| Custom Table  | `/nameera/table-custom`  | Alpine.js pagination & sort |
+
+### Form
+
+| Halaman      | URL                     | Keterangan                                                |
+| ------------ | ----------------------- | --------------------------------------------------------- |
+| Form Basic   | `/nameera/form-basic`   | Input standar HTML                                        |
+| Form Special | `/nameera/form-special` | Flatpickr, IMask, Choices.js, Quill, FilePond (semua CDN) |
+| Form Custom  | `/nameera/form-custom`  | Multi-step wizard, rating, color picker, Tagify (CDN)     |
 
 ---
 
@@ -235,26 +313,34 @@ Package ini secara otomatis memuat route kustom melalui `NameeraServiceProvider`
 
 ### 1. Override View Blade
 
-Anda dapat menimpa (_override_) komponen visual bawaan paket dengan membuat file Blade baru pada direktori proyek utama:
+Buat file Blade baru di proyek utama Anda pada path yang sesuai:
 
 ```
-resources/views/vendor/nameera/components/sidebar.blade.php
-
+resources/views/vendor/nameera/
+├── components/
+│   ├── sidebar.blade.php     ← Override sidebar
+│   └── header.blade.php      ← Override header
+├── layouts/
+│   └── app.blade.php         ← Override layout utama
+└── pages/
+    └── dashboard.blade.php   ← Override halaman tertentu
 ```
 
-### 2. Kustomisasi Kode Warna (`:root`)
+### 2. Kustomisasi Warna Tema
 
-Untuk mengubah tema warna default (misalnya mengubah warna hijau utama menjadi biru), Anda tidak perlu mengubah file konfigurasi JavaScript. Cukup ubah nilai Hex pada file `public/vendor/nameera/css/style.css`:
+Ubah nilai variabel CSS di file yang sudah dipublikasikan `public/vendor/nameera/css/style.css`:
 
 ```css
 :root {
-  --primary: #1d4ed8;       /* Ganti warna utama di sini */
-  --primary-mid: #2563eb;   /* Ganti warna hover di sini */
+  --primary: #1d4ed8; /* Ganti ke warna biru */
+  --primary-mid: #2563eb;
   --primary-light: #93c5fd;
-  ...
+  --primary-bg: #dbeafe;
+  /* ... dst */
 }
-
 ```
+
+Jika menggunakan **Tailwind v4**, pastikan juga memperbarui nilai fallback di blok `@theme` pada `resources/css/app.css` agar konsisten.
 
 ---
 
@@ -263,36 +349,81 @@ Untuk mengubah tema warna default (misalnya mengubah warna hijau utama menjadi b
 ```
 nameera-ui/
 ├── src/
-│   └── NameeraServiceProvider.php
+│   └── NameeraUiServiceProvider.php   ← Auto-discovered oleh Laravel
 ├── resources/
 │   └── views/
 │       ├── components/
+│       │   ├── header.blade.php
+│       │   └── sidebar.blade.php
 │       ├── layouts/
+│       │   └── app.blade.php
 │       └── pages/
+│           ├── dashboard.blade.php
+│           ├── login.blade.php
+│           ├── register.blade.php
+│           ├── error-404.blade.php
+│           ├── comp-base.blade.php
+│           ├── comp-nav.blade.php
+│           ├── comp-feedback.blade.php
+│           ├── comp-data.blade.php
+│           ├── comp-advanced.blade.php
+│           ├── table-basic.blade.php
+│           ├── table-special.blade.php
+│           ├── table-custom.blade.php
+│           ├── form-basic.blade.php
+│           ├── form-special.blade.php
+│           └── form-custom.blade.php
 ├── public/
 │   ├── css/
 │   │   └── style.css
 │   └── js/
-│       └── app.js
+│       ├── app.js
+│       └── forms.js
 ├── routes/
 │   └── web.php
+├── examples/
+│   └── tailwind-v4-app.css            ← Contoh konfigurasi app.css (Tailwind v4)
 ├── composer.json
-└── README.md
-
+└── README.MD
 ```
+
+---
+
+## ❓ Troubleshooting
+
+### Tailwind class tidak bekerja (bg-primary, text-dark, dll)
+
+- Pastikan `@source` path sudah benar di `app.css` (Tailwind v4) atau `content` array di `tailwind.config.js` (Tailwind v3).
+- Jalankan `npm run build` ulang setelah mengubah konfigurasi.
+
+### Dark Mode tidak berfungsi
+
+- **Tailwind v4:** Pastikan ada `@variant dark (&:where(.dark, .dark *));` di `app.css`.
+- **Tailwind v3:** Pastikan ada `darkMode: "class"` di `tailwind.config.js`.
+
+### Error "Alpine is not defined" atau Alpine berjalan dua kali
+
+- Package ini memuat Alpine.js via CDN. **Jangan** import Alpine di `resources/js/app.js`.
+- Jika sudah terlanjur import, hapus baris `import Alpine from 'alpinejs'` beserta `Alpine.start()`.
+
+### Error saat `npm run build` — file CSS tidak ditemukan
+
+- Pastikan sudah menjalankan `composer require nameera/ui-template` terlebih dahulu.
+- Path `@import` di `app.css` mengarah ke `../../vendor/nameera/ui-template/public/css/style.css` (dari source package, bukan dari folder `public/`).
+
+### Halaman kosong / 404
+
+- Pastikan sudah menjalankan `php artisan vendor:publish --tag=nameera-assets`.
+- Cek apakah route terdaftar: `php artisan route:list --path=nameera`.
 
 ---
 
 ## 🤝 Kontribusi
 
-Jika Anda ingin berkontribusi atau menemukan bug teknis, silakan buat _issue_ atau _pull request_ baru pada repositori GitHub ini.
+Jika Anda ingin berkontribusi atau menemukan bug, silakan buat _issue_ atau _pull request_ pada [repositori GitHub](https://github.com/andreas-wq/nameera-ui).
 
 ---
 
 ## 📄 Lisensi
 
-Package ini dilisensikan di bawah [MIT License](https://www.google.com/search?q=LICENSE).
-
-```
-
-```
+Package ini dilisensikan di bawah [MIT License](LICENSE).

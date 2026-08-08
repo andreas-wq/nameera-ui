@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('nameera::layouts.app')
 
 @section('content')
           <div>

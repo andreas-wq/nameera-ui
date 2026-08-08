@@ -6,13 +6,17 @@
 /* 1. Import Tailwind CSS v4 (standar Laravel 11+ dengan Vite) */
 @import "tailwindcss";
 
-/* 2. Import file CSS package Nameera UI yang menyediakan variabel warna */
-@import "../../vendor/nameera/ui-template/public/css/style.css";
+/* 2. Wajib: Daftarkan variant 'dark' agar class-based Dark Mode berjalan */
+/* Tanpa ini, semua class dark:... tidak akan berfungsi di Tailwind v4       */
+@variant dark (&:where(.dark, .dark *));
 
 /* 3. Scan semua view package Nameera UI agar utility class-nya aktif */
 @source "../../vendor/nameera/ui-template/resources/views/**/*.blade.php";
 
-/* 4. Definisikan tema berdasarkan variabel CSS dari Nameera UI */
+/* 4. Import file CSS package Nameera UI yang menyediakan variabel warna */
+@import "../../vendor/nameera/ui-template/public/css/style.css";
+
+/* 5. Definisikan tema berdasarkan variabel CSS dari Nameera UI */
 @theme {
   /* Warna utama (primary) */
   --color-primary: var(--primary, #3b6d11);
@@ -38,7 +42,7 @@
   --radius-3xl: 2rem;
 }
 
-/* 5. Custom CSS tambahan jika diperlukan */
+/* 6. Custom CSS tambahan jika diperlukan */
 /* Misalnya, override scrollbar untuk konsistensi dengan tema Nameera UI */
 ::-webkit-scrollbar {
   width: 6px;
@@ -58,12 +62,12 @@
   background: var(--primary-mid);
 }
 
-/* 6. Pastikan body menggunakan font-body dari tema */
+/* 7. Pastikan body menggunakan font-body dari tema */
 body {
   font-family: var(--font-body);
 }
 
-/* 7. Heading menggunakan font-heading */
+/* 8. Heading menggunakan font-heading */
 h1,
 h2,
 h3,
