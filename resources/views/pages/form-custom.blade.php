@@ -308,7 +308,35 @@
                   class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4"
                 >
                   <template x-for="(file, index) in files" :key="file.id">
-                    <!-- Preview logic simplified for brevity -->
+                    <div class="relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 group hover:border-primary transition-colors">
+                      <!-- Preview Image / Icon -->
+                      <div class="aspect-square w-full rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-900 mb-2 flex items-center justify-center">
+                        <template x-if="isImage(file)">
+                          <img :src="file.url" :alt="file.name" class="object-cover w-full h-full" />
+                        </template>
+                        <template x-if="!isImage(file)">
+                          <div class="text-center p-3">
+                            <div class="w-10 h-12 bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-md flex items-center justify-center mx-auto mb-1">
+                              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zM6 20V4h7v5h5v11H6z"/>
+                              </svg>
+                            </div>
+                            <span class="text-xs font-bold text-gray-600 dark:text-gray-300">PDF</span>
+                          </div>
+                        </template>
+                      </div>
+                      <!-- File Info -->
+                      <p class="text-xs font-bold text-dark dark:text-white truncate" x-text="file.name"></p>
+                      <p class="text-[10px] text-gray-500 dark:text-gray-400" x-text="formatSize(file.size)"></p>
+                      <!-- Remove Button -->
+                      <button
+                        type="button"
+                        @click="removeFile(file.id)"
+                        class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-xs shadow-md transition-colors"
+                      >
+                        ×
+                      </button>
+                    </div>
                   </template>
                 </div>
               </div>
@@ -322,7 +350,5 @@
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify@4.31.4/dist/tagify.min.js"></script>
-    <script defer src="https://unpkg.com/@alpinejs/collapse@3.14.1/dist/cdn.min.js"></script>
-    <script defer src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js"></script>
     <script src="{{ asset('vendor/nameera/js/forms.js') }}"></script>
 @endpush

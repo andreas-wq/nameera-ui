@@ -241,7 +241,38 @@ function fileUploader() {
     },
 
     removeFile(id) {
+      const file = this.files.find((f) => f.id === id);
+      if (file && file.url) {
+        URL.revokeObjectURL(file.url);
+      }
       this.files = this.files.filter((f) => f.id !== id);
+    },
+
+    clearAll() {
+      this.files.forEach((file) => {
+        if (file.url) URL.revokeObjectURL(file.url);
+      });
+      this.files = [];
+    },
+
+    init() {
+      // Revoke semua URL saat Alpine component di-unmount (cleanup)
+      const cleanup = () => {
+        this.files.forEach((file) => {
+          if (file.url) URL.revokeObjectURL(file.url);
+        });
+      };
+
+      // Attach cleanup ke event sebelum component di-unmount
+      // (Alpine.js v3 mendeteksi $watch atau $destroy)
+      if (this.$el && this.$el.parentNode) {
+        // Gunakan Alpine built-in jika tersedia
+        if (typeof this.$destroy === "function") {
+          this.$destroy(() => cleanup());
+        }
+      }
+
+      return cleanup;
     },
   };
 }
