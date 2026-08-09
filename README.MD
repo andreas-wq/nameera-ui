@@ -293,16 +293,18 @@ Semua route menggunakan prefix `/nameera`. Berikut daftar lengkap halaman yang b
 
 ### Tabel
 
-| Halaman       | URL                      | Keterangan                  |
-| ------------- | ------------------------ | --------------------------- |
-| Basic Table   | `/nameera/table-basic`   | Tabel HTML statis           |
-| Special Table | `/nameera/table-special` | Menggunakan List.js (CDN)   |
-| Custom Table  | `/nameera/table-custom`  | Alpine.js pagination & sort |
+| Halaman         | URL                        | Keterangan                                   |
+| --------------- | -------------------------- | -------------------------------------------- |
+| Basic Table     | `/nameera/table-basic`     | Tabel HTML statis                            |
+| Special Table   | `/nameera/table-special`   | Menggunakan List.js (CDN)                    |
+| Custom Table    | `/nameera/table-custom`    | Alpine.js pagination & sort                  |
+| Custom Table V2 | `/nameera/table-custom-v2` | Server-side Laravel Paginator, search & sort |
 
 ### Form
 
 | Halaman      | URL                     | Keterangan                                                |
 | ------------ | ----------------------- | --------------------------------------------------------- |
+| Form Kit     | `/nameera/form-kit`     | Gabungan Basic + Special + Custom dalam satu halaman      |
 | Form Basic   | `/nameera/form-basic`   | Input standar HTML                                        |
 | Form Special | `/nameera/form-special` | Flatpickr, IMask, Choices.js, Quill, FilePond (semua CDN) |
 | Form Custom  | `/nameera/form-custom`  | Multi-step wizard, rating, color picker, Tagify (CDN)     |
@@ -370,19 +372,23 @@ nameera-ui/
 │           ├── table-basic.blade.php
 │           ├── table-special.blade.php
 │           ├── table-custom.blade.php
+│           ├── table-custom-v2.blade.php
 │           ├── form-basic.blade.php
 │           ├── form-special.blade.php
-│           └── form-custom.blade.php
+│           ├── form-custom.blade.php
+│           └── form-kit.blade.php
 ├── public/
 │   ├── css/
 │   │   └── style.css
 │   └── js/
 │       ├── app.js
-│       └── forms.js
+│       ├── forms.js
+│       └── tables.js
 ├── routes/
 │   └── web.php
 ├── examples/
 │   └── tailwind-v4-app.css            ← Contoh konfigurasi app.css (Tailwind v4)
+├── prompt-agent-laravel-crud-kit.md   ← Prompt agent untuk generate CRUD Laravel
 ├── composer.json
 └── README.MD
 ```

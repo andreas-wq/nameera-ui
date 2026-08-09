@@ -115,6 +115,11 @@
         class="pl-[3.25rem] pr-4 py-1 space-y-1"
       >
         <a
+          href="{{ url('nameera/form-kit') }}"
+          class="{{ request()->is('nameera/form-kit') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
+          >Form Kit</a
+        >
+        <a
           href="{{ url('nameera/form-basic') }}"
           class="{{ request()->is('nameera/form-basic') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
           >Basic Form</a
@@ -198,6 +203,16 @@
           class="{{ request()->is('nameera/table-custom') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} block text-sm py-2 transition-colors"
           >Custom Table</a
         >
+        <a
+          href="{{ url('nameera/table-custom-v2') }}"
+          class="{{ request()->is('nameera/table-custom-v2') ? 'text-primary-light font-bold' : 'text-gray-400 hover:text-white' }} flex justify-between items-center text-sm py-2 transition-colors"
+        >
+          <span>Custom V2</span>
+          <span
+            class="bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm"
+            >Laravel</span
+          >
+        </a>
       </div>
     </div>
 

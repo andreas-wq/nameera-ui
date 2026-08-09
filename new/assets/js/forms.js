@@ -98,23 +98,11 @@ function formSpecial() {
        sebelum masuk antrian FilePond, supaya hemat bandwidth server. */
     _initFilePond() {
       if (!window.FilePond || !this.$refs.sertifikat) return;
-
-      // Registrasi plugin sekali saja (guard untuk mencegah error
-      // saat komponen dibuat ulang oleh Alpine).
-      if (!window.__nameeraFilePondPlugins) {
-        window.__nameeraFilePondPlugins = true;
-        try {
-          FilePond.registerPlugin(
-            FilePondPluginImagePreview,
-            FilePondPluginFileValidateType,
-            FilePondPluginFileValidateSize,
-          );
-        } catch (e) {
-          console.warn("Gagal register FilePond plugin:", e);
-        }
-      }
-
-      if (FilePond.find(this.$refs.sertifikat)) return;
+      FilePond.registerPlugin(
+        FilePondPluginImagePreview,
+        FilePondPluginFileValidateType,
+        FilePondPluginFileValidateSize,
+      );
 
       FilePond.create(this.$refs.sertifikat, {
         labelIdle:
@@ -254,8 +242,27 @@ function formSpecial() {
         );
       }
     },
+
+    /* ---------- SortableJS (drag-reorder) ---------- */
+    _initSortable() {
+      if (!window.Sortable || !this.$refs.sortableList) return;
+      Sortable.create(this.$refs.sortableList, {
+        animation: 150,
+        handle: ".sortable-handle",
+        ghostClass: "opacity-50 bg-primary-bg",
+        chosenClass: "bg-primary-bg",
+        dragClass: "shadow-lg",
+      });
+    },
+
+    deleteSortable(id) {
+      this.sortableItems = this.sortableItems.filter((i) => i.id !== id);
+    },
   };
 }
+
+// ===== [ SPECIAL: PristineJS — data sortable & opsi dinamis ] =====
+// (Opsi & list default disimpan di x-data masing-masing komponen)
 
 // ===== [ SPECIAL: dragSortable — urutan dokumen upload ] =====
 function dragSortable() {
@@ -268,6 +275,7 @@ function dragSortable() {
     ],
 
     init() {
+      this._sortableCreated = !this.$refs.sortableList;
       if (this.$refs.sortableList && window.Sortable) {
         new Sortable(this.$refs.sortableList, {
           animation: 150,
@@ -284,9 +292,11 @@ function dragSortable() {
   };
 }
 
+// ===== [ SPECIAL: validasi Custom Label jadi badge ] =====
+
 // ===== [ CUSTOM: formCustom ] =====
 // Wizard multi-langkah + validasi per-step, rating, warna, emoji survey,
-// combobox, currency formatter
+// input tags (Tagify), combobox multiset, currency formatter
 function formCustom() {
   return {
     _initialized: false,
@@ -296,7 +306,6 @@ function formCustom() {
     totalSteps: 3,
     stepLabels: ["Data Diri", "Data Kebun", "Konfirmasi"],
     data: { nama: "", nik: "", kebun: "", komoditas: "" },
-    wizardDone: false,
 
     /* Rating */
     rating: 0,
@@ -314,7 +323,6 @@ function formCustom() {
     /* Combobox */
     comboboxOpen: false,
     comboboxIndex: 0,
-    comboboxQuery: "",
     comboboxData: [
       "Manggis",
       "Nanas",
@@ -332,11 +340,45 @@ function formCustom() {
     },
 
     /* Rupiah formatter */
-    currencyNumber: 1250000,
+    rawNumber: 1250000,
+
+    /* Provinsi → Kabupaten */
+    provinsi: "",
+    kabupaten: "",
+    dataWilayah: {
+      "Jawa Barat": ["Bandung", "Bogor", "Garut", "Tasikmalaya"],
+      "Jawa Timur": ["Malang", "Banyuwangi", "Jember", "Blitar"],
+      Bali: ["Badung", "Buleleng", "Gianyar", "Tabanan"],
+      Lampung: ["Pringsewu", "Tulang Bawang", "Lampung Selatan"],
+    },
+    daftarProvinsi() {
+      return Object.keys(this.dataWilayah);
+    },
+    daftarKabupaten() {
+      return this.dataWilayah[this.provinsi] || [];
+    },
+    resetKabupaten() {
+      this.kabupaten = "";
+    },
 
     init() {
       if (this._initialized) return;
       this._initialized = true;
+
+      // Tagify utk label produk (plugin, tetap dimuat di Custom utk integrasi mudah)
+      if (window.Tagify && this.$refs.tagsInput) {
+        new Tagify(this.$refs.tagsInput, {
+          whitelist: [
+            "Organik",
+            "Premium",
+            "Panen Baru",
+            "Grade A",
+            "Ekspor",
+            "Lokal",
+          ],
+          dropdown: { enabled: 0, closeOnSelect: true },
+        });
+      }
     },
 
     /* Validasi per-step */
@@ -435,13 +477,55 @@ function otpInput() {
       text.split("").forEach((ch, i) => {
         this.code[i] = ch;
       });
-      this.sync();
+      sync: this.sync();
       this.$refs["otp-" + Math.min(text.length, 5)]?.focus();
       e.preventDefault();
     },
 
     sync() {
       this.value = this.code.join("");
+    },
+  };
+}
+
+// ===== CUSTOM: Combobox / Autocomplete =====
+// (Sudah di-error log dalam formCustom() — di sini komponen terpisah utk chartlist)
+
+// ===== CUSTOM: Currency Formatter (murni Alpine) =====
+function currencyCustom() {
+  return {
+    raw: 1250000,
+
+    get display() {
+      try {
+        return new Intl.NumberFormat("id-ID", {
+          style: "currency",
+          currency: "IDR",
+          maximumFractionDigits: 0,
+        }).format(this.raw || 0);
+      } catch {
+        return "Rp 0";
+      }
+    },
+
+    onInput(e) {
+      const digits = e.target.value.replace(/\D/g, "");
+      this.raw = digits ? parseInt(digits, 10) : 0;
+    },
+  };
+}
+
+// ===== CUSTOM: Emoji Mood Picker =====
+// (Sudah dipakai di formCustom() — dipisah untuk reusability)
+function emojiMood() {
+  return {
+    mood: null,
+    hover: 0,
+    list: ["😀", "🙂", "😐", "🙁", "😞"],
+    label() {
+      return ["Sangat Puas", "Puas", "Netral", "Kurang", "Tidak Puas"][
+        (this.mood || 0) - 1
+      ];
     },
   };
 }
@@ -477,6 +561,8 @@ function customSignature() {
 
     init() {
       this.resizeCanvas();
+      // Tutup goresan jika pointer keluar canvas
+      this.isInCanvas = false;
     },
 
     resizeCanvas() {
@@ -531,7 +617,7 @@ function customSignature() {
       this.ctx.stroke();
     },
 
-    stop() {
+    stop(e) {
       this.isDrawing = false;
     },
 

@@ -34,6 +34,10 @@ Route::prefix('nameera')->group(function () {
         return view('nameera::pages.table-custom');
     });
 
+    Route::get('/table-custom-v2', function () {
+        return view('nameera::pages.table-custom-v2');
+    });
+
     // Component pages
     Route::get('/comp-base', function () {
         return view('nameera::pages.comp-base');
@@ -66,5 +70,9 @@ Route::prefix('nameera')->group(function () {
 
     Route::get('/form-custom', function () {
         return view('nameera::pages.form-custom');
+    });
+
+    Route::get('/form-kit', function () {
+        return view('nameera::pages.form-kit');
     });
 });
